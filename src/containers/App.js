@@ -11,7 +11,6 @@ import Preloader from "../components/Preloader/Preloader";
 
 class App extends Component {
 
-
     state = {
         category: '',
         title: '',
@@ -20,30 +19,30 @@ class App extends Component {
         loading: false,
     };
 
-
     componentDidMount() {
-        console.log(this.props.history)
+            const category = document.location.pathname.substr(1);
+            this.showPage(null, category);
     }
 
-    showPage = (e) => {
-
-        const id = e.currentTarget.id;
+    showPage = (e, category) => {
+        let id = '';
+        if (e !== null) {
+            id = e.currentTarget.id;
+        } else {
+            id = category;
+        }
         this.setState({category: id, loading: true});
         axios.get(`hw65articles.json?orderBy="category"&equalTo="${id}"`).then((response) => {
 
-            console.log('response data', response);
-
             Object.keys(response.data).map(id => {
-
                 const contentState = convertFromRaw(JSON.parse(response.data[id].article));
-                console.log(contentState);
+
                 return this.setState({
                     category: response.data[id].category,
                     title: response.data[id].title,
                     editorState: EditorState.createWithContent(contentState)
                 })
             });
-
             return {...response.data[id], id}
         }).finally(() => {
             this.setState({loading: false})
@@ -53,7 +52,6 @@ class App extends Component {
 
 
     render() {
-
 
         return (
             <div className="App">
@@ -103,6 +101,7 @@ class App extends Component {
                         </div>
                     }}/>
                     <Route path='/pages/admin' exact component={Admin}/>
+
                 </Switch>
             </div>
         );

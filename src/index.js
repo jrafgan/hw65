@@ -5,7 +5,7 @@ import App from './containers/App';
 import * as serviceWorker from './serviceWorker';
 import {BrowserRouter} from "react-router-dom";
 
-const app = <BrowserRouter><App/></BrowserRouter>;
+const app = (<BrowserRouter><App/></BrowserRouter>);
 
 ReactDOM.render(app, document.getElementById('root'));
 

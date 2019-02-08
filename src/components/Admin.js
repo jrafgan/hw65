@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component} from 'react';
 import axios from '../axios-url';
 import './Admin.css';
 import {Editor} from 'react-draft-wysiwyg';
@@ -6,7 +6,7 @@ import {EditorState, convertToRaw, convertFromRaw} from 'draft-js'
 import '../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import {CATEGORIES} from '../categories';
 import Preloader from "./Preloader/Preloader";
-
+import {NavLink, Switch} from "react-router-dom";
 
 class Admin extends Component {
 
@@ -27,11 +27,8 @@ class Admin extends Component {
 
             axios.get(`hw65articles.json?orderBy="category"&equalTo="${value}"`).then((response) => {
 
-                console.log(response.data);
-
-                const article = Object.keys(response.data).map(id => {
+                Object.keys(response.data).map(id => {
                     this.id = id;
-                    console.log(id);
 
                     const contentState = convertFromRaw(JSON.parse(response.data[id].article));
 
@@ -43,20 +40,16 @@ class Admin extends Component {
 
                     return {...response.data[id], id}
                 });
-                console.log(article);
             }).finally(() => {
                 this.setState({loading: false})
             });
         }
-        console.log(name)
     };
 
     submitHandler = e => {
         e.preventDefault();
 
         const contentState = convertToRaw(this.state.editorState.getCurrentContent());
-
-        console.log(this.id);
 
         this.setState({article: JSON.stringify(contentState)});
 
@@ -70,8 +63,8 @@ class Admin extends Component {
 
         axios.put('hw65articles/' + this.id + '.json', article).finally(() => {
             this.setState({loading: false});
-            this.props.history.push('/' + this.state.category);
-            console.log(this.state.category);
+
+            this.props.history.push(`/${this.state.category}`);
         });
     };
 
@@ -81,10 +74,10 @@ class Admin extends Component {
 
 
     render() {
-
-
-        if (this.state.loading) { return <Preloader/>} else {
-            return (<div>
+        if (this.state.loading) {
+            return <Preloader/>
+        } else {
+            return (<Switch>
                     <form className='articleForm' onSubmit={(e) => this.submitHandler(e)}>
                         <label>Category : </label>
                         <select id="category" name='category' onChange={(e) => this.changeValue(e)}
@@ -106,10 +99,9 @@ class Admin extends Component {
                             editorState={this.state.editorState}
                             onEditorStateChange={this.onEditorStateChange}/>
 
-                        <button type='submit'> Save</button>
+                        <button type='submit'>Save</button>
                     </form>
-                </div>
-            );
+                </Switch>);
         }
     }
 }
