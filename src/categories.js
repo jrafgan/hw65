@@ -1,0 +1,1 @@
+export const CATEGORIES = ['Science', 'About', 'Contacts', 'Divisions', 'Lessons', 'Requirements', 'Agreement'];
